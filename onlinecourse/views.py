@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-# <HINT> Import any new Models here
 from .models import Course, Enrollment, Question, Choice, Submission
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
@@ -8,9 +7,7 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib.auth import login, logout, authenticate
 import logging
-# Get an instance of a logger
 logger = logging.getLogger(__name__)
-# Create your views here.
 from django.views import View
 
 def registration_request(request):
@@ -118,7 +115,7 @@ from .models import Choice, Question
 
 class SubmissionView(View):
      
-    def post(self, request): #*args, **kwargs
+    def post(self, request): 
         course_id = request.POST.get('course_id')
         selected_choices = []
         for key, value in request.POST.items():
