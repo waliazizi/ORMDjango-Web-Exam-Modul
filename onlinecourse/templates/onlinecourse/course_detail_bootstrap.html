@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                  <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li>
+                    <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="username" >
+                            <input type="password" class="form-control" placeholder="Username" name="psw" >
+                            <button class="btn btn-primary" type="submit">Login</button>
+                            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
+                        </div>
+                    </form>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page content -->
+    <div class="container-fluid">
+            <h2>{{ course.name }}</h2>
+            <div class="card-columns-vertical">
+                {% for lesson in course.lesson_set.all %}
+                    <div class="card mt-1">
+                        <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
+                        <div class="card-body">{{lesson.content}}</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+
+
+      
+
+<!--------------------------------------------------------------------------------------------------------------------------->
+
+<button type="button" data-target="#exam" class="btn btn-primary btn-lg btn-block" data-toggle="collapse" >Test your knowledge</button>
+
+
+<div class="collapse" id="exam">
+    <br>
+    <h4>Read carefully as there are only 3 questions, you can attempt multiple times. <br> There is only one correct answer.</h4> <br>
+    {% if score != '' %}
+    {{ score }} 
+ {% endif %}
+    <form action="{% url 'onlinecourse:submission' %}" method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+        <p>Question: {{ question.question_text }}</p>
+        <ul>
+            {% for choice in choices %}
+            {% if choice.question_id == question.id %}
+            <li>
+                <input type="checkbox" id="choice_{{ choice.id }}" name="choice_{{ choice.id }}">
+                <label for="choice_{{ choice.id }}">{{ choice.choice_text }}</label>
+                <input type="hidden" name="course_id" value="{{ course.id }}" />
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
+
+
+
+</body>
+</html>
+
+
+
+
